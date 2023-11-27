@@ -47,9 +47,14 @@ interface RolesAutoCompleteOption {
     role: RolesInterface;
 }
 
-interface InviteParentOrgUserFormValuesInterface {
+interface InviteParentOrgUserWizardFormValuesInterface {
     username: string;
     roles: RolesAutoCompleteOption[];
+}
+
+interface InviteParentOrgUserWizardFormErrorsInterface {
+    username: string;
+    roles: string;
 }
 
 interface InviteParentOrgUserWizardPropsInterface extends IdentifiableComponentInterface {
@@ -60,7 +65,7 @@ interface InviteParentOrgUserWizardPropsInterface extends IdentifiableComponentI
 const INVITE_PARENT_ORG_USER_FORM_ID: string = "invite-parent-org-user-form";
 
 /**
- * Invite parent organization user wizard component.
+ * The invite parent organization user wizard component.
  *
  * @returns Invite parent organization user wizard.
  */
@@ -78,6 +83,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
     const dispatch: Dispatch = useDispatch();
     const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false);
     const { data: allowedRoles } = useRolesList();
+
     const rolesAutocompleteOptions: RolesAutoCompleteOption[] = useMemo(() => {
 
         if (isEmpty(allowedRoles?.Resources)) {
@@ -139,7 +145,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
     /**
      * This function handles sending the invitation to the external admin user.
      */
-    const sendParentOrgInvitation = (values: InviteParentOrgUserFormValuesInterface) => {
+    const sendParentOrgInvitation = (values: InviteParentOrgUserWizardFormValuesInterface) => {
 
         const invite: UserInviteInterface = {
             roles: values?.roles?.map((role: RolesAutoCompleteOption) => role.role.id),
@@ -170,6 +176,27 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
             });
     };
 
+    const validateInviteParentOrgUserForm = (
+        values: InviteParentOrgUserWizardFormValuesInterface
+    ): InviteParentOrgUserWizardFormErrorsInterface => {
+
+        const errors: InviteParentOrgUserWizardFormErrorsInterface = {
+            roles: undefined,
+            username: undefined
+        };
+
+        // TODO: use i18n
+        if (!values.username) {
+            errors.username = "Username is a required field";
+        }
+
+        if (!values.roles || isEmpty(values.roles)) {
+            errors.roles = "Roles is a required field";
+        }
+
+        return errors;
+    };
+
     const renderModalContent = (): ReactElement => {
 
         return (
@@ -178,6 +205,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                 keepDirtyOnReinitialize={ true }
                 data-componentid={ `${ componentId }-external-form` }
                 onSubmit={ sendParentOrgInvitation }
+                validate={ validateInviteParentOrgUserForm }
                 render={ ({ handleSubmit }: FormRenderProps) => {
                     return (
                         <form

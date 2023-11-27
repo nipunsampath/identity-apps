@@ -185,13 +185,13 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
             username: undefined
         };
 
-        // TODO: use i18n
         if (!values.username) {
-            errors.username = "Username is a required field";
+            errors.username = t("console:manage.features.parentOrgInvitations.addUserWizard.username.validations" +
+                ".required");
         }
 
         if (!values.roles || isEmpty(values.roles)) {
-            errors.roles = "Roles is a required field";
+            errors.roles =  t("console:manage.features.parentOrgInvitations.addUserWizard.roles.validations.required");
         }
 
         return errors;
@@ -221,28 +221,24 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                                 fullWidth
                                 ariaLabel="Username field"
                                 data-componentid={ `${componentId}-external-form-username-input` }
-                                label={ t(
-                                    "console:manage.features.user.forms.addUserForm.inputs.username.label"
-                                ) }
+                                label={ t("console:manage.features.parentOrgInvitations.addUserWizard.username.label") }
                                 name="username"
                                 placeholder={ t(
-                                    "console:manage.features.user.forms.addUserForm.inputs." +
-                                    "username.placeholder"
+                                    "console:manage.features.parentOrgInvitations.addUserWizard.username.placeholder"
                                 ) }
                                 required={ true }
-                                requiredErrorMessage={ t(
-                                    "console:manage.features.user.forms.addUserForm.inputs.email.validations.empty"
-                                ) }
                                 type="text"
                                 tabIndex={ 5 }
                                 helperText={ (
                                     <Hint>
-                                        { t("console:manage.features.parentOrgInvitations.addUserWizard.usernameHint") }
+                                        <Typography variant="inherit">
+                                            { t("console:manage.features.parentOrgInvitations.addUserWizard.username" +
+                                                ".hint") }
+                                        </Typography>
                                     </Hint>
                                 ) }
                                 component={ TextFieldAdapter }
                             />
-
                             <FinalFormField
                                 fullWidth
                                 required
@@ -251,13 +247,18 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                                 ariaLabel="Roles field"
                                 data-componentid={ `${componentId}-form-roles-field` }
                                 name="roles"
-                                label={ "Roles" }
+                                label={ t("console:manage.features.parentOrgInvitations.addUserWizard.roles.label") }
                                 helperText={
                                     (<Hint>
-                                        Assign roles for the user that is being invited.
+                                        <Typography variant="inherit">
+                                            { t("console:manage.features.parentOrgInvitations.addUserWizard.roles" +
+                                                ".hint") }
+                                        </Typography>
                                     </Hint>)
                                 }
-                                placeholder="Select roles"
+                                placeholder={
+                                    t("console:manage.features.parentOrgInvitations.addUserWizard.roles.placeholder")
+                                }
                                 component={ AutocompleteFieldAdapter }
                                 options={ rolesAutocompleteOptions }
                                 renderTags={ (value: readonly any[], getTagProps: AutocompleteRenderGetTagProps) => {
@@ -306,7 +307,9 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                                     .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
                             } }
                         >
-                            <Typography variant="inherit">Invite</Typography>
+                            <Typography variant="inherit">
+                                { t("console:manage.features.parentOrgInvitations.addUserWizard.inviteButton") }
+                            </Typography>
                         </PrimaryButton>
                     </Grid.Column>
                 </Grid.Row>

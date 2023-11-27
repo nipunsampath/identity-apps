@@ -85,6 +85,7 @@ import { AddUserWizard } from "../components/wizard/add-user-wizard";
 import { BulkImportUserWizard } from "../components/wizard/bulk-import-user-wizard";
 import { UserAccountTypes, UserAccountTypesMain, UserAddOptionTypes, UserManagementConstants } from "../constants";
 import { UserListInterface } from "../models";
+import { InviteParentOrgUserWizard } from "../components/wizard/invite-parent-org-user-wizard";
 
 interface UserStoreItem {
     key: number;
@@ -129,6 +130,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
     const [ activeTabIndex, setActiveTabIndex ] = useState<number>(0);
     const [ listItemLimit, setListItemLimit ] = useState<number>(UIConstants.DEFAULT_RESOURCE_LIST_ITEM_LIMIT);
     const [ showWizard, setShowWizard ] = useState<boolean>(false);
+    const [ showInviteParentOrgUserWizard, setShowInviteParentOrgUserWizard ] = useState<boolean>(false);
     const [ showBulkImportWizard, setShowBulkImportWizard ] = useState<boolean>(false);
     const [ usersList, setUsersList ] = useState<UserListInterface>({});
     const [ isListUpdated, setListUpdated ] = useState(false);
@@ -785,7 +787,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             eventPublisher.publish("manage-users-click-create-invite", {
                 type: "user"
             });
-            setShowWizard(true);
+            setShowInviteParentOrgUserWizard(true);
             setUserType(UserAccountTypesMain.EXTERNAL);
         } else if (value === UserAddOptionTypes.BULK_IMPORT) {
             handleAddNewUserWizardClick();
@@ -994,6 +996,18 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         );
     };
 
+    const renderInviteParentOrgUserWizard = (): ReactElement => {
+        return (
+            <InviteParentOrgUserWizard
+                closeWizard={ () => {
+                    setShowInviteParentOrgUserWizard(false);
+                } }
+                updateList={ () => setListUpdated(true) }
+            />
+        );
+
+    };
+    
     return (
         <PageLayout
             action={
@@ -1022,7 +1036,8 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             }
             {
                 showWizard && showUserWizard()
-            } 
+            }
+            { showInviteParentOrgUserWizard && renderInviteParentOrgUserWizard() }
             {
                 showBulkImportWizard
                 && !connectorConfigLoading

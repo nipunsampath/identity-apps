@@ -228,7 +228,6 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                                 ) }
                                 required={ true }
                                 type="text"
-                                tabIndex={ 5 }
                                 helperText={ (
                                     <Hint>
                                         <Typography variant="inherit">
@@ -297,7 +296,6 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                     </Grid.Column>
                     <Grid.Column mobile={ 8 } tablet={ 8 } computer={ 8 }>
                         <PrimaryButton
-                            tabIndex={ 8 }
                             data-componentid={ `${componentId}-submit-button` }
                             floated="right"
                             loading={ isSubmitting }

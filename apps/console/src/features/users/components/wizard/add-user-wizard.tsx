@@ -148,7 +148,6 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
     const [ initialTempGroupList, setInitialTempGroupList ] = useState<GroupsInterface[]>([]);
     const [ isSubmitting, setIsSubmitting ] = useState<boolean>(false);
     const [ isAlphanumericUsername, setIsAlphanumericUsername ] = useState<boolean>(false);
-    const [ isFinishButtonDisabled, setFinishButtonDisabled ] = useState<boolean>(false);
     const [ isBasicDetailsLoading, setBasicDetailsLoading ] = useState<boolean>(false);
     const [ isStepsUpdated, setIsStepsUpdated ] = useState<boolean>(false);
     const [ isFirstNameRequired, setFirstNameRequired ] = useState<boolean>(true);
@@ -841,7 +840,7 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
     const resolveWizardTitle = (): string => {
         let wizardTitle: string = "";
 
-        if (userTypeSelection === UserAccountTypesMain.EXTERNAL) {
+if (userTypeSelection === UserAccountTypesMain.EXTERNAL) {
             wizardTitle = t("extensions:manage.users.wizard.addUser.title");
         } else {
             wizardTitle = t("console:manage.features.parentOrgInvitations.addUserWizard.heading");
@@ -1039,7 +1038,7 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
             title: t("console:manage.features.user.modals.addUserWizard.steps.summary")
         };
     };
-    
+
     /**
      * Resolves the step content.
      *
@@ -1120,7 +1119,7 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
                                     floated="right"
                                     onClick={ navigateToNext }
                                     loading={ isSubmitting }
-                                    disabled={ isSubmitting || isFinishButtonDisabled }
+                                    disabled={ isSubmitting }
                                 >
                                     { resolveWizardPrimaryButtonText() }
                                 </PrimaryButton>

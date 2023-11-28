@@ -39,9 +39,9 @@ import { UsersConstants } from "apps/console/src/extensions/components/users/con
 import { InvitationStatus } from "apps/console/src/extensions/components/users/models";
 import { AxiosError, AxiosResponse } from "axios";
 import React, {
-    FunctionComponent, 
-    ReactElement, 
-    SyntheticEvent, 
+    FunctionComponent,
+    ReactElement,
+    SyntheticEvent,
     useEffect,
     useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -236,35 +236,35 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         if (searchQuery === "userName co " || searchQuery === "" || searchQuery === null) {
             setPaginateGuestList(parentOrgUserInviteList?.invitations);
             setFilterGuestList([]);
-    
+
             return;
         } else if (searchQuery) {
             let searchList: UserInviteInterface[] = parentOrgUserInviteList?.invitations;
-    
+
             if (filterGuestList?.length > 0) {
                 searchList = filterGuestList;
             }
             if (searchQuery.includes("userName sw ")) {
                 const searchValue: string = searchQuery.split("sw ")[1];
-    
+
                 searchList = searchList?.filter((invite: UserInviteInterface) => {
                     return invite?.username.startsWith(searchValue);
                 });
             } else if (searchQuery.includes("userName ew ")) {
                 const searchValue: string = searchQuery.split("ew ")[1];
-    
+
                 searchList = searchList?.filter((invite: UserInviteInterface) => {
                     return invite?.username.endsWith(searchValue);
                 });
             } else if (searchQuery.includes("userName eq ")) {
                 const searchValue: string = searchQuery.split("eq ")[1];
-    
+
                 searchList = searchList?.filter((invite: UserInviteInterface) => {
                     return (invite?.username === searchValue);
                 });
             } else if (searchQuery.includes("userName co ")) {
                 const searchValue: string = searchQuery.split("co ")[1];
-    
+
                 searchList = searchList?.filter((invite: UserInviteInterface) => {
                     return invite?.username.includes(searchValue);
                 });
@@ -283,7 +283,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         getList(listItemLimit, listOffset, null, attributes, userStore);
         setListUpdated(false);
     }, [ isListUpdated ]);
-    
+
     useEffect(() => {
         setShowMultipleInviteConfirmationModal(
             showBulkImportWizard
@@ -308,10 +308,10 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         if (invitationStatusOption === InvitationStatus.ACCEPTED) {
             return;
         }
-    
+
         let finalInvitations: UserInviteInterface[] = paginatedGuestList?.filter(
             (invitation: UserInviteInterface) => invitation.status === invitationStatusOption.toUpperCase());
-    
+
         if (finalInvitations?.length > listItemLimit) {
             finalInvitations = finalInvitations.slice(listOffset, listOffset + listItemLimit);
             setFinalGuestList(finalInvitations);
@@ -614,7 +614,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                 );
 
                 const emailVerification: ConnectorPropertyInterface = userOnboardingConnector.properties.find(
-                    (property: ConnectorPropertyInterface) => 
+                    (property: ConnectorPropertyInterface) =>
                         property.name === ServerConfigurationsConstants.EMAIL_VERIFICATION_ENABLED);
 
                 setEmailVerificationEnabled(emailVerification.value === "true");
@@ -701,14 +701,14 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
                 data-testid="user-mgt-user-list-layout"
                 onPageChange={ handlePaginationChange }
                 rightActionPanel={
-                    isFirstLevelOrganization() || isSuperOrganization()  
+                    isFirstLevelOrganization() || isSuperOrganization()
                         ? (<Dropdown
                             data-testid="user-mgt-user-list-userstore-dropdown"
                             selection
                             options={ userStoreOptions && userStoreOptions }
                             onChange={ handleDomainChange }
                             defaultValue={ PRIMARY_USERSTORE.toLocaleLowerCase() }
-                        />) : null  
+                        />) : null
                 }
                 showPagination={ true }
                 showTopActionPanel={ isUserListRequestLoading
@@ -774,7 +774,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         }
     ].filter(Boolean);
 
-    
+
     const handleDropdownItemChange = (value: string): void => {
         if (value === UserAccountTypesMain.INTERNAL) {
             handleAddNewUserWizardClick();
@@ -794,7 +794,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             setShowBulkImportWizard(true);
         }
     };
-    
+
     const handleTabChange = (e: SyntheticEvent, data: TabProps): void => {
         setActiveTabIndex(data.activeIndex as number);
         handleSearchQueryClear();
@@ -804,7 +804,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             setUserType(UserAccountTypesMain.EXTERNAL);
         }
     };
-    
+
     const renderUserDropDown = (): ReactElement => {
         return (
             <Dropdown
@@ -831,7 +831,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             </Dropdown>
         );
     };
-    
+
     const showUserWizard = (): ReactElement => {
         return (
             <AddUserWizard
@@ -858,25 +858,25 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             />
         );
     };
-    
+
     const resolveAdminTabPanes = (): ResourceTabPaneInterface[] => {
         const panes: ResourceTabPaneInterface[] = [];
-    
+
         panes.push({
             componentId: "users",
             menuItem: t("console:manage.features.parentOrgInvitations.tab.usersTab"),
             render: renderUsersList
         });
-    
+
         panes.push({
             componentId: "invitations",
             menuItem: t("console:manage.features.parentOrgInvitations.tab.invitationsTab"),
             render: renderInvitationsList
         });
-    
+
         return panes;
     };
-    
+
     const renderInvitationsList = (): ReactElement => {
         return (
             <ListLayout
@@ -948,12 +948,12 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
             </ListLayout>
         );
     };
-    
+
     const handleAccountStatusChange = (event: React.MouseEvent<HTMLAnchorElement>, data: DropdownProps): void => {
         setInvitationStatusOption(data.value as string);
         setIsInvitationStatusOptionChanged(true);
     };
-    
+
     const resolveTotalPages = (): number => {
         if (selectedUserStore === CONSUMER_USERSTORE) {
             return Math.ceil(usersList?.totalResults / listItemLimit);
@@ -1009,7 +1009,7 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         );
 
     };
-    
+
     return (
         <PageLayout
             action={

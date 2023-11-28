@@ -985,13 +985,15 @@ const UsersPage: FunctionComponent<UsersPageInterface> = (
         );
     };
 
+    /**
+     * Renders the wizard for inviting a parent org user for the current organization.
+     * @returns Inviting parent org user wizard.
+     */
     const renderInviteParentOrgUserWizard = (): ReactElement => {
         return (
             <InviteParentOrgUserWizard
-                closeWizard={ () => {
-                    setShowInviteParentOrgUserWizard(false);
-                } }
-                updateList={ () => setListUpdated(true) }
+                closeWizard={ () => setShowInviteParentOrgUserWizard(false) }
+                updateUserList={ () => setListUpdated(true) }
             />
         );
 

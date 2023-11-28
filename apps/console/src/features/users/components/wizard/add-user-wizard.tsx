@@ -27,9 +27,6 @@ import {
 import { addAlert } from "@wso2is/core/store";
 import { useTrigger } from "@wso2is/forms";
 import { Heading, LinkButton, PrimaryButton, Steps, useWizardAlert } from "@wso2is/react-components";
-import { 
-    InternalAdminFormDataInterface, 
-    UserInviteInterface } from "apps/console/src/extensions/components/users/models";
 import { UserTypeSelection } from "apps/console/src/extensions/components/users/wizard";
 import { AxiosError, AxiosResponse } from "axios";
 import cloneDeep from "lodash-es/cloneDeep";
@@ -74,8 +71,6 @@ import { generatePassword, getConfiguration, getUsernameConfiguration } from "..
 import { AddUserGroup } from "../add-user-groups";
 import { AddUserRole } from "../add-user-role";
 import { AddUserUpdated } from "../add-user-updated";
-import { sendParentOrgUserInvite } from "../guests/api/invite";
-import { InviteParentOrgUser } from "../guests/pages/invite-parent-org-user";
 
 interface AddUserWizardPropsInterface extends IdentifiableComponentInterface, TestableComponentInterface {
     closeWizard: () => void;
@@ -622,8 +617,6 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
             stepsToFilter.forEach((step: WizardStepsFormTypes) => {
                 if (step === WizardStepsFormTypes.USER_TYPE) {
                     filteredSteps.push(getUserSelectionWizardStep());
-                } else if (step === WizardStepsFormTypes.BASIC_DETAILS) {
-                    filteredSteps.push(resolveBasicDetailsStep());
                 } else if (step === WizardStepsFormTypes.GROUP_LIST) {
                     filteredSteps.push(getUserGroupsWizardStep());
                 } else if (step === WizardStepsFormTypes.ROLE_LIST) {
@@ -1289,9 +1282,6 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
 
         if (defaultUserTypeSelection === UserAccountTypes.USER) {
             wizardTitle = t("extensions:manage.users.wizard.addUser.title");
-            if (userTypeSelection === UserAccountTypesMain.EXTERNAL) {
-                wizardTitle = t("console:manage.features.parentOrgInvitations.addUserWizard.heading"); 
-            } 
         } 
         
         if (defaultUserTypeSelection === UserAccountTypes.ADMINISTRATOR) {
@@ -1315,26 +1305,9 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
 
         if (defaultUserTypeSelection === UserAccountTypes.USER) {
             wizardSubHeading = t("extensions:manage.users.wizard.addUser.subtitle");
-            if (userTypeSelection === UserAccountTypesMain.EXTERNAL) {
-                wizardSubHeading = t("console:manage.features.parentOrgInvitations.addUserWizard.description");
-            }
         }
 
         return wizardSubHeading;
-    };
-    
-    /**
-     * Resolves the basic details step.
-     *
-     * @returns Basic details step.
-     */
-    const resolveBasicDetailsStep = (): WizardStepInterface => {
-
-        if (wizardState && wizardState[ WizardStepsFormTypes.USER_TYPE ].userType === UserAccountTypes.USER) {
-            if (userTypeSelection === UserAccountTypesMain.EXTERNAL) {
-                return getInviteParentOrgUserStep();
-            } 
-        } 
     };
 
     /**
@@ -1466,109 +1439,7 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
             title: t("console:manage.features.user.modals.addUserWizard.steps.summary")
         };
     };
-
-    /**
-     * This function handles sending the invitation to the external admin user.
-     */
-    const sendParentOrgInvitation = (invite: UserInviteInterface) => {
-        if (invite != null) {
-            setIsSubmitting(true);
     
-            sendParentOrgUserInvite(invite)
-                .then(() => {
-                    dispatch(addAlert({
-                        description: t(
-                            "console:manage.features.invite.notifications.sendInvite.success.description"
-                        ),
-                        level: AlertLevels.SUCCESS,
-                        message: t(
-                            "console:manage.features.invite.notifications.sendInvite.success.message"
-                        )
-                    }));
-                    closeWizard();
-                })
-                .catch((error: AxiosError) => {
-                    /**
-                     * Axios throws a generic `Network Error` for 401 status.
-                     * As a temporary solution, a check to see if a response
-                     * is available has be used.
-                     */
-                    if (!error.response || error.response.status === 401) {
-                        closeWizard();
-                        dispatch(addAlert({
-                            description: t(
-                                "console:manage.features.invite.notifications.sendInvite.error.description"
-                            ),
-                            level: AlertLevels.ERROR,
-                            message: t(
-                                "console:manage.features.invite.notifications.sendInvite.error.message"
-                            )
-                        }));
-                    } else if (error.response.status === 403 &&
-                            error?.response?.data?.code === UsersConstants.ERROR_COLLABORATOR_USER_LIMIT_REACHED) {
-                        closeWizard();
-                        dispatch(addAlert({
-                            description: t(
-                                "extensions:manage.invite.notifications.sendInvite.limitReachError.description"
-                            ),
-                            level: AlertLevels.ERROR,
-                            message: t(
-                                "extensions:manage.invite.notifications.sendInvite.limitReachError.message"
-                            )
-                        }));
-                    } else if (error?.response?.data?.description) {
-                        closeWizard();
-                        dispatch(addAlert({
-                            description: t(
-                                "console:manage.features.invite.notifications.sendInvite.error.description",
-                                { description: error.response.data.description }
-                            ),
-                            level: AlertLevels.ERROR,
-                            message: t(
-                                "console:manage.features.invite.notifications.sendInvite.error.message"
-                            )
-                        }));
-                    } else {
-                        closeWizard();
-                        // Generic error message
-                        dispatch(addAlert({
-                            description: t(
-                                "console:manage.features.invite.notifications.sendInvite.genericError.description"
-                            ),
-                            level: AlertLevels.ERROR,
-                            message: t(
-                                "console:manage.features.invite.notifications.sendInvite.genericError.message"
-                            )
-                        }));
-                    }
-                })
-                .finally(() => {
-                    setIsSubmitting(false);
-                });
-        } 
-    };
-
-    /**
-     * Basic Wizard Step.
-     * @returns Basic details wizard step.
-     */
-    const getInviteParentOrgUserStep = (): WizardStepInterface => {
-        return {
-            content: (
-                <InviteParentOrgUser
-                    triggerSubmit={ submitGeneralSettings }
-                    onSubmit={ (values: InternalAdminFormDataInterface | UserInviteInterface) => 
-                        sendParentOrgInvitation(values as UserInviteInterface)
-                    }
-                    setFinishButtonDisabled={ (setFinishButtonDisabled) }
-                />
-            ),
-            icon: null,
-            name: WizardStepsFormTypes.BASIC_DETAILS,
-            title: t("console:manage.features.user.modals.addUserWizard.steps.basicDetails")
-        };
-    };
-
     /**
      * Resolves the step content.
      *
@@ -1578,8 +1449,6 @@ export const AddUserWizard: FunctionComponent<AddUserWizardPropsInterface> = (
         switch (wizardSteps[ currentWizardStep ]?.name) {
             case WizardStepsFormTypes.USER_TYPE:
                 return getUserSelectionWizardStep()?.content;
-            case WizardStepsFormTypes.BASIC_DETAILS:
-                return resolveBasicDetailsStep()?.content;
             case WizardStepsFormTypes.SUMMARY:
                 return getSummaryWizardStep()?.content;
             case WizardStepsFormTypes.USER_SUMMARY:

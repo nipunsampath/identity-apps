@@ -34,11 +34,11 @@ import { useTranslation } from "react-i18next";
 import { useDispatch } from "react-redux";
 import { Dispatch } from "redux";
 import { Grid, Modal } from "semantic-ui-react";
-// Keep statement as this to avoid cyclic dependency. Do not import from config index.
-import { UsersConstants } from "../../../../extensions/components/users/constants";
-import { useRolesList } from "../../../roles/api";
-import { sendParentOrgUserInvite } from "../guests/api/invite";
-import { UserInviteInterface } from "../guests/models/invite";
+import { UsersConstants } from "../../../../../extensions/components/users/constants";
+import { ApplicationManagementConstants } from "../../../../applications/constants";
+import { useRolesList } from "../../../../roles/api";
+import { sendParentOrgUserInvite } from "../api/invite";
+import { UserInviteInterface } from "../models/invite";
 
 
 interface RolesAutoCompleteOption {
@@ -91,8 +91,9 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
         }
 
         return allowedRoles?.Resources
-            ?.filter((role: RolesInterface) => role.audience.display !== "Console")
-            ?.map((role: RolesInterface) => {
+            ?.filter(
+                (role: RolesInterface) => role.audience.display !== ApplicationManagementConstants.CONSOLE_APP_NAME
+            )?.map((role: RolesInterface) => {
                 return {
                     key: role.id,
                     label: role.displayName,

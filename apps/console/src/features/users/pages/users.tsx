@@ -80,6 +80,7 @@ import { getUsersList } from "../api";
 import { UserInviteInterface } from "../components/guests/models/invite";
 import { GuestUsersList } from "../components/guests/pages/guest-users-list";
 import { useGetParentOrgUserInvites } from "../components/guests/pages/use-get-parent-org-user-invites";
+import { InviteParentOrgUserWizard } from "../components/guests/wizard/invite-parent-org-user-wizard";
 import { UsersList } from "../components/users-list";
 import { AddUserWizard } from "../components/wizard/add-user-wizard";
 import { BulkImportUserWizard } from "../components/wizard/bulk-import-user-wizard";
@@ -90,7 +91,6 @@ import {
     UserManagementConstants
 } from "../constants";
 import { UserListInterface } from "../models";
-import { InviteParentOrgUserWizard } from "../components/wizard/invite-parent-org-user-wizard";
 
 interface UserStoreItem {
     key: number;

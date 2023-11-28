@@ -40,26 +40,43 @@ import { useRolesList } from "../../../../roles/api";
 import { sendParentOrgUserInvite } from "../api/invite";
 import { UserInviteInterface } from "../models/invite";
 
-
+/**
+ * Interface for the RolesAutoCompleteOptions.
+ */
 interface RolesAutoCompleteOption {
     key: string;
     label: ReactNode;
     role: RolesInterface;
 }
 
+/**
+ * Interface for the InviteParentOrgUserWizard form values.
+ */
 interface InviteParentOrgUserWizardFormValuesInterface {
     username: string;
     roles: RolesAutoCompleteOption[];
 }
 
+/**
+ * Interface for the InviteParentOrgUserWizard form errors.
+ */
 interface InviteParentOrgUserWizardFormErrorsInterface {
     username: string;
     roles: string;
 }
 
+/**
+ * Props interface of {@link InviteParentOrgUserWizard}
+ */
 interface InviteParentOrgUserWizardPropsInterface extends IdentifiableComponentInterface {
+    /**
+     * Callback method for closing the wizard.
+     */
     closeWizard: () => void;
-    updateList?: () => void;
+    /**
+     * Callback method for updating the user list.
+     */
+    updateUserList: () => void;
 }
 
 const INVITE_PARENT_ORG_USER_FORM_ID: string = "invite-parent-org-user-form";
@@ -75,7 +92,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
 
     const {
         closeWizard,
-        updateList,
+        updateUserList,
         [ "data-componentid"]: componentId
     } = props;
 
@@ -102,6 +119,11 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
             });
     }, [ allowedRoles ]);
 
+    /**
+     * Handles the error scenario when sending an invitation to a user in a parent organization to join the current
+     * organization.
+     * @param error - Error response.
+     */
     const handleParentOrgUserInviteError = (error: AxiosError) => {
 
         /**
@@ -144,9 +166,10 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
     };
 
     /**
-     * This function handles sending the invitation to the external admin user.
+     * Sends an invitation to a user in a parent organization to join the current organization.
+     * @param values - Form values.
      */
-    const sendParentOrgInvitation = (values: InviteParentOrgUserWizardFormValuesInterface) => {
+    const inviteParentOrgUser = (values: InviteParentOrgUserWizardFormValuesInterface) => {
 
         const invite: UserInviteInterface = {
             roles: values?.roles?.map((role: RolesAutoCompleteOption) => role.role.id),
@@ -177,6 +200,11 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
             });
     };
 
+    /**
+     * Validates the invite parent org user form values.
+     * @param values - Form values.
+     * @returns An error object containing validation error messages.
+     */
     const validateInviteParentOrgUserForm = (
         values: InviteParentOrgUserWizardFormValuesInterface
     ): InviteParentOrgUserWizardFormErrorsInterface => {
@@ -198,6 +226,10 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
         return errors;
     };
 
+    /**
+     * Renders the content of the InviteParentOrgUser wizard modal.
+     * @returns The rendered modal content.
+     */
     const renderModalContent = (): ReactElement => {
 
         return (
@@ -205,7 +237,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                 initialValues={ null }
                 keepDirtyOnReinitialize={ true }
                 data-componentid={ `${ componentId }-external-form` }
-                onSubmit={ sendParentOrgInvitation }
+                onSubmit={ inviteParentOrgUser }
                 validate={ validateInviteParentOrgUserForm }
                 render={ ({ handleSubmit }: FormRenderProps) => {
                     return (
@@ -279,6 +311,10 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
         );
     };
 
+    /**
+     * Renders the actions that can be performed within the InviteParentOrgUser wizard modal.
+     * @returns The rendered modal actions as a grid.
+     */
     const renderModalActions = (): ReactElement => {
         return (
             <Grid>
@@ -288,7 +324,7 @@ export const InviteParentOrgUserWizard: FunctionComponent<InviteParentOrgUserWiz
                             data-componentid={ `${ componentId }-cancel-button` }
                             floated="left"
                             onClick={ () => {
-                                updateList();
+                                updateUserList();
                                 closeWizard();
                             } }
                         >
